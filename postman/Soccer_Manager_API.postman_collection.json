@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "soccer-manager-api",
+		"name": "Soccer Manager API",
+		"description": "Collection for testing Soccer Manager API endpoints with localization support (EN/KA)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register (EN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"    pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en",
+								"description": "English localization"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"team_name\": \"My Dream Team\",\n    \"country\": \"England\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register (KA)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "ka",
+								"description": "Georgian localization"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test2@example.com\",\n    \"password\": \"password123\",\n    \"team_name\": \"ჩემი გუნდი\",\n    \"country\": \"საქართველო\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "register"]
+						},
+						"description": "Registration with Georgian language responses"
+					},
+					"response": []
+				},
+				{
+					"name": "Login (EN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"    pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login (KA)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "ka",
+								"description": "Georgian responses"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"wrongpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "login"]
+						},
+						"description": "Login with wrong password to see Georgian error message"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Team",
+			"item": [
+				{
+					"name": "Get My Team",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/team",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "team"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Team (EN)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Team Name\",\n    \"country\": \"Spain\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/team",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "team"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Players",
+			"item": [
+				{
+					"name": "Update Player",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Cristiano\",\n    \"last_name\": \"Ronaldo\",\n    \"country\": \"Portugal\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "players", "{{player_id}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transfers",
+			"item": [
+				{
+					"name": "List Player for Transfer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"asking_price\": 1500000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/transfer",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "players", "{{player_id}}", "transfer"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Transfer List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/transfers",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "transfers"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buy Player (EN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/transfers/{{transfer_id}}/buy",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "transfers", "{{transfer_id}}", "buy"]
+						},
+						"description": "Purchase player with English response"
+					},
+					"response": []
+				},
+				{
+					"name": "Buy Player (KA)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "ka",
+								"description": "Georgian response"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/transfers/{{transfer_id}}/buy",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "transfers", "{{transfer_id}}", "buy"]
+						},
+						"description": "Purchase player with Georgian response: 'მოთამაშე წარმატებით შეძენილია'"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
+		},
+		{
+			"key": "player_id",
+			"value": ""
+		},
+		{
+			"key": "transfer_id",
+			"value": ""
+		}
+	]
+}

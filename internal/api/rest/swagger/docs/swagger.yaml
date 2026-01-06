@@ -1,0 +1,517 @@
+basePath: /
+definitions:
+  entity.ErrorResponse:
+    properties:
+      details:
+        type: string
+      error:
+        type: string
+    type: object
+  entity.ListPlayerRequest:
+    properties:
+      asking_price:
+        minimum: 1
+        type: integer
+    required:
+    - asking_price
+    type: object
+  entity.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  entity.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  entity.Player:
+    properties:
+      age:
+        type: integer
+      country:
+        type: string
+      created_at:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      market_value:
+        type: integer
+      position:
+        $ref: '#/definitions/entity.PlayerPosition'
+      team_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  entity.PlayerPosition:
+    enum:
+    - goalkeeper
+    - defender
+    - midfielder
+    - attacker
+    type: string
+    x-enum-varnames:
+    - PositionGoalkeeper
+    - PositionDefender
+    - PositionMidfielder
+    - PositionAttacker
+  entity.RegisterRequest:
+    properties:
+      country:
+        maxLength: 50
+        minLength: 2
+        type: string
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      team_name:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - country
+    - email
+    - password
+    - team_name
+    type: object
+  entity.Team:
+    properties:
+      budget:
+        type: integer
+      country:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      total_value:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  entity.TeamWithPlayers:
+    properties:
+      players:
+        items:
+          $ref: '#/definitions/entity.Player'
+        type: array
+      team:
+        $ref: '#/definitions/entity.Team'
+    type: object
+  entity.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  entity.Transfer:
+    properties:
+      asking_price:
+        type: integer
+      buyer_id:
+        type: string
+      completed_at:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      player_id:
+        type: string
+      seller_id:
+        type: string
+      status:
+        $ref: '#/definitions/entity.TransferStatus'
+    type: object
+  entity.TransferListItem:
+    properties:
+      player:
+        $ref: '#/definitions/entity.Player'
+      seller_team:
+        $ref: '#/definitions/entity.Team'
+      transfer:
+        $ref: '#/definitions/entity.Transfer'
+    type: object
+  entity.TransferStatus:
+    enum:
+    - active
+    - completed
+    - cancelled
+    type: string
+    x-enum-varnames:
+    - TransferStatusActive
+    - TransferStatusCompleted
+    - TransferStatusCancelled
+  entity.TransfersResponse:
+    properties:
+      transfers:
+        items:
+          $ref: '#/definitions/entity.TransferListItem'
+        type: array
+    type: object
+  entity.UpdatePlayerRequest:
+    properties:
+      country:
+        maxLength: 50
+        minLength: 2
+        type: string
+      first_name:
+        maxLength: 50
+        minLength: 2
+        type: string
+      last_name:
+        maxLength: 50
+        minLength: 2
+        type: string
+    type: object
+  entity.UpdateTeamRequest:
+    properties:
+      country:
+        maxLength: 50
+        minLength: 2
+        type: string
+      name:
+        maxLength: 50
+        minLength: 3
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@soccermanager.com
+    name: API Support
+  description: REST API for Soccer Manager Service
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: Soccer Manager API
+  version: "1.0"
+paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user with credentials
+      operationId: login
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      summary: Login user
+      tags:
+      - auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register new user and create team
+      operationId: register
+      parameters:
+      - description: Registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      summary: Register new user
+      tags:
+      - auth
+  /api/v1/players/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update player information
+      operationId: update-player
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Player update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdatePlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Player'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update player
+      tags:
+      - players
+  /api/v1/players/{id}/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Put player on transfer market
+      operationId: list-player-transfer
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Transfer data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ListPlayerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entity.Transfer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List player for transfer
+      tags:
+      - transfers
+  /api/v1/team:
+    get:
+      description: Get current user's team with players
+      operationId: get-my-team
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.TeamWithPlayers'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get my team
+      tags:
+      - team
+    patch:
+      consumes:
+      - application/json
+      description: Update team name and country
+      operationId: update-team
+      parameters:
+      - description: Team update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.UpdateTeamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Team'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update team
+      tags:
+      - team
+  /api/v1/transfers:
+    get:
+      description: Get all available transfers
+      operationId: get-transfer-list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.TransfersResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get transfer list
+      tags:
+      - transfers
+  /api/v1/transfers/{id}/buy:
+    post:
+      description: Purchase player from transfer market
+      operationId: buy-player
+      parameters:
+      - description: Transfer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entity.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Buy player
+      tags:
+      - transfers
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
