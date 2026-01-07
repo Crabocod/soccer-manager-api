@@ -69,6 +69,7 @@ make clean  # Clean build artifacts
 │   ├── api/rest/                   # REST handlers & middleware
 │   ├── bootstrap/                  # Application initialization (DI, DB, Redis, JWT)
 │   ├── config/                     # Configuration
+│   ├── dto/                        # Data Transfer Objects for API
 │   ├── entity/                     # Domain models
 │   ├── ports/                      # Repository interfaces
 │   ├── repository/                 # PostgreSQL and Redis repositories
