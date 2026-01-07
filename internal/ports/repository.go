@@ -2,6 +2,7 @@ package ports
 
 import (
 	"context"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/entity"
 
 	"github.com/google/uuid"
@@ -47,7 +48,7 @@ type LoginAttemptRepository interface {
 }
 
 type TeamCacheRepository interface {
-	SetTeam(ctx context.Context, userID uuid.UUID, team *entity.TeamWithPlayers) (err error)
-	GetTeam(ctx context.Context, userID uuid.UUID) (team *entity.TeamWithPlayers, err error)
+	SetTeam(ctx context.Context, userID uuid.UUID, team *dto.TeamWithPlayersResponse) (err error)
+	GetTeam(ctx context.Context, userID uuid.UUID) (team *dto.TeamWithPlayersResponse, err error)
 	InvalidateTeam(ctx context.Context, userID uuid.UUID) (err error)
 }

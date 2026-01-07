@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"soccer_manager_service/internal/api/rest/middleware"
-	"soccer_manager_service/internal/entity"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/usecase/adapters"
 	apperr "soccer_manager_service/pkg/errors"
 
@@ -26,6 +26,7 @@ func NewPlayerHandler(playerService adapters.PlayerService, logger *zap.Logger) 
 	}
 }
 
+// UpdatePlayer
 // @Summary Update player
 // @Description Update player information
 // @ID update-player
@@ -34,12 +35,12 @@ func NewPlayerHandler(playerService adapters.PlayerService, logger *zap.Logger) 
 // @Accept json
 // @Produce json
 // @Param id path string true "Player ID"
-// @Param request body entity.UpdatePlayerRequest true "Player update data"
+// @Param request body dto.UpdatePlayerRequest true "Player update data"
 // @Success 200 {object} entity.Player
-// @Failure 400 {object} entity.ErrorResponse
-// @Failure 401 {object} entity.ErrorResponse
-// @Failure 404 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/players/{id} [patch]
 func (h *PlayerHandler) UpdatePlayer(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)
@@ -62,7 +63,7 @@ func (h *PlayerHandler) UpdatePlayer(c *gin.Context) {
 		return
 	}
 
-	var req entity.UpdatePlayerRequest
+	var req dto.UpdatePlayerRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Warn("invalid update player request", zap.Error(err))

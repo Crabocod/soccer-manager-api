@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"soccer_manager_service/internal/config"
-	"soccer_manager_service/internal/entity"
+	"soccer_manager_service/internal/dto"
 
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -36,7 +36,7 @@ func NewTeamCache(params TeamCacheParams) *TeamCache {
 	}
 }
 
-func (r *TeamCache) SetTeam(ctx context.Context, userID uuid.UUID, team *entity.TeamWithPlayers) (err error) {
+func (r *TeamCache) SetTeam(ctx context.Context, userID uuid.UUID, team *dto.TeamWithPlayersResponse) (err error) {
 	if userID == uuid.Nil {
 		return errors.New("empty user_id")
 	}
@@ -65,7 +65,7 @@ func (r *TeamCache) SetTeam(ctx context.Context, userID uuid.UUID, team *entity.
 	return nil
 }
 
-func (r *TeamCache) GetTeam(ctx context.Context, userID uuid.UUID) (team *entity.TeamWithPlayers, err error) {
+func (r *TeamCache) GetTeam(ctx context.Context, userID uuid.UUID) (team *dto.TeamWithPlayersResponse, err error) {
 	if userID == uuid.Nil {
 		return nil, errors.New("empty user_id")
 	}
@@ -85,7 +85,7 @@ func (r *TeamCache) GetTeam(ctx context.Context, userID uuid.UUID) (team *entity
 		return nil, fmt.Errorf("get cached team: %w", err)
 	}
 
-	var teamWithPlayers entity.TeamWithPlayers
+	var teamWithPlayers dto.TeamWithPlayersResponse
 
 	if err := json.Unmarshal([]byte(data), &teamWithPlayers); err != nil {
 		r.logger.Error("failed to unmarshal team", zap.Error(err), zap.String("user_id", userID.String()))

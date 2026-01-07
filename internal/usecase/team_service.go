@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/entity"
 	"soccer_manager_service/internal/ports"
 
@@ -32,7 +33,7 @@ func NewTeamService(params TeamServiceParams) *TeamService {
 	}
 }
 
-func (s *TeamService) GetMyTeam(ctx context.Context, userID uuid.UUID) (*entity.TeamWithPlayers, error) {
+func (s *TeamService) GetMyTeam(ctx context.Context, userID uuid.UUID) (*dto.TeamWithPlayersResponse, error) {
 	s.logger.Info("getting team", zap.String("user_id", userID.String()))
 
 	cachedTeam, err := s.teamCacheRepository.GetTeam(ctx, userID)
@@ -74,7 +75,7 @@ func (s *TeamService) GetMyTeam(ctx context.Context, userID uuid.UUID) (*entity.
 		}
 	}
 
-	teamWithPlayers := &entity.TeamWithPlayers{
+	teamWithPlayers := &dto.TeamWithPlayersResponse{
 		Team:    *team,
 		Players: players,
 	}
@@ -86,7 +87,7 @@ func (s *TeamService) GetMyTeam(ctx context.Context, userID uuid.UUID) (*entity.
 	return teamWithPlayers, nil
 }
 
-func (s *TeamService) UpdateTeam(ctx context.Context, userID uuid.UUID, req *entity.UpdateTeamRequest) (*entity.Team, error) {
+func (s *TeamService) UpdateTeam(ctx context.Context, userID uuid.UUID, req *dto.UpdateTeamRequest) (*entity.Team, error) {
 	s.logger.Info("updating team", zap.String("user_id", userID.String()))
 
 	existingTeam, err := s.teamRepository.GetByUserID(ctx, userID)

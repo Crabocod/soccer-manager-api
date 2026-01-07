@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"soccer_manager_service/internal/api/rest/middleware"
-	"soccer_manager_service/internal/entity"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/usecase/adapters"
 	apperr "soccer_manager_service/pkg/errors"
 
@@ -25,16 +25,17 @@ func NewTeamHandler(teamService adapters.TeamService, logger *zap.Logger) *TeamH
 	}
 }
 
+// GetMyTeam
 // @Summary Get my team
 // @Description Get current user's team with players
 // @ID get-my-team
 // @Tags team
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {object} entity.TeamWithPlayers
-// @Failure 401 {object} entity.ErrorResponse
-// @Failure 404 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Success 200 {object} dto.TeamWithPlayersResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/team [get]
 func (h *TeamHandler) GetMyTeam(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)
@@ -67,6 +68,7 @@ func (h *TeamHandler) GetMyTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, teamWithPlayers)
 }
 
+// UpdateTeam
 // @Summary Update team
 // @Description Update team name and country
 // @ID update-team
@@ -74,12 +76,12 @@ func (h *TeamHandler) GetMyTeam(c *gin.Context) {
 // @Security BearerAuth
 // @Accept json
 // @Produce json
-// @Param request body entity.UpdateTeamRequest true "Team update data"
+// @Param request body dto.UpdateTeamRequest true "Team update data"
 // @Success 200 {object} entity.Team
-// @Failure 400 {object} entity.ErrorResponse
-// @Failure 401 {object} entity.ErrorResponse
-// @Failure 404 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/team [patch]
 func (h *TeamHandler) UpdateTeam(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)
@@ -92,7 +94,7 @@ func (h *TeamHandler) UpdateTeam(c *gin.Context) {
 		return
 	}
 
-	var req entity.UpdateTeamRequest
+	var req dto.UpdateTeamRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Warn("invalid update team request", zap.Error(err))

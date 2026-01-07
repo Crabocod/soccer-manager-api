@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/entity"
 	"soccer_manager_service/internal/ports"
 
@@ -32,7 +33,7 @@ func NewPlayerService(params PlayerServiceParams) *PlayerService {
 	}
 }
 
-func (s *PlayerService) UpdatePlayer(ctx context.Context, userID, playerID uuid.UUID, req *entity.UpdatePlayerRequest) (*entity.Player, error) {
+func (s *PlayerService) UpdatePlayer(ctx context.Context, userID, playerID uuid.UUID, req *dto.UpdatePlayerRequest) (*entity.Player, error) {
 	s.logger.Info("updating player", zap.String("player_id", playerID.String()), zap.String("user_id", userID.String()))
 
 	player, err := s.playerRepository.GetByID(ctx, playerID)

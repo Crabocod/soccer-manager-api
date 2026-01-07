@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"math/rand"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/entity"
 	"soccer_manager_service/internal/ports"
 	apperr "soccer_manager_service/pkg/errors"
@@ -37,7 +38,7 @@ func NewTransferService(params TransferServiceParams) *TransferService {
 	}
 }
 
-func (s *TransferService) ListPlayer(ctx context.Context, userID, playerID uuid.UUID, req *entity.ListPlayerRequest) (*entity.Transfer, error) {
+func (s *TransferService) ListPlayer(ctx context.Context, userID, playerID uuid.UUID, req *dto.ListPlayerRequest) (*entity.Transfer, error) {
 	s.logger.Info("listing player for transfer",
 		zap.String("user_id", userID.String()),
 		zap.String("player_id", playerID.String()),
@@ -84,7 +85,7 @@ func (s *TransferService) ListPlayer(ctx context.Context, userID, playerID uuid.
 	return transfer, nil
 }
 
-func (s *TransferService) GetTransferList(ctx context.Context) ([]entity.TransferListItem, error) {
+func (s *TransferService) GetTransferList(ctx context.Context) ([]dto.TransferListItemResponse, error) {
 	s.logger.Info("getting transfer list")
 
 	transfers, err := s.transferRepository.GetActiveTransfers(ctx)
@@ -94,7 +95,7 @@ func (s *TransferService) GetTransferList(ctx context.Context) ([]entity.Transfe
 		return nil, err
 	}
 
-	var items []entity.TransferListItem
+	var items []dto.TransferListItemResponse
 
 	for _, transfer := range transfers {
 		player, err := s.playerRepository.GetByID(ctx, transfer.PlayerID)
@@ -115,7 +116,7 @@ func (s *TransferService) GetTransferList(ctx context.Context) ([]entity.Transfe
 			continue
 		}
 
-		items = append(items, entity.TransferListItem{
+		items = append(items, dto.TransferListItemResponse{
 			Transfer: transfer,
 			Player:   *player,
 			Team:     *team,

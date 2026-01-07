@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"soccer_manager_service/internal/api/rest/middleware"
-	"soccer_manager_service/internal/entity"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/usecase/adapters"
 	apperr "soccer_manager_service/pkg/errors"
 
@@ -25,22 +25,23 @@ func NewAuthHandler(authService adapters.AuthService, logger *zap.Logger) *AuthH
 	}
 }
 
+// Register
 // @Summary Register new user
 // @Description Register new user and create team
 // @ID register
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body entity.RegisterRequest true "Registration data"
-// @Success 201 {object} entity.TokenResponse
-// @Failure 400 {object} entity.ErrorResponse
-// @Failure 409 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Param request body dto.RegisterRequest true "Registration data"
+// @Success 201 {object} dto.TokenResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)
 
-	var req entity.RegisterRequest
+	var req dto.RegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Warn("invalid register request", zap.Error(err))
@@ -74,23 +75,24 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	})
 }
 
+// Login
 // @Summary Login user
 // @Description Login user with credentials
 // @ID login
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body entity.LoginRequest true "Login credentials"
-// @Success 200 {object} entity.TokenResponse
-// @Failure 400 {object} entity.ErrorResponse
-// @Failure 401 {object} entity.ErrorResponse
-// @Failure 429 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Param request body dto.LoginRequest true "Login credentials"
+// @Success 200 {object} dto.TokenResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 429 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)
 
-	var req entity.LoginRequest
+	var req dto.LoginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Warn("invalid login request", zap.Error(err))

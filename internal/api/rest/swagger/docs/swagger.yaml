@@ -1,13 +1,13 @@
 basePath: /
 definitions:
-  entity.ErrorResponse:
+  dto.ErrorResponse:
     properties:
       details:
         type: string
       error:
         type: string
     type: object
-  entity.ListPlayerRequest:
+  dto.ListPlayerRequest:
     properties:
       asking_price:
         minimum: 1
@@ -15,7 +15,7 @@ definitions:
     required:
     - asking_price
     type: object
-  entity.LoginRequest:
+  dto.LoginRequest:
     properties:
       email:
         type: string
@@ -25,9 +25,88 @@ definitions:
     - email
     - password
     type: object
-  entity.MessageResponse:
+  dto.MessageResponse:
     properties:
       message:
+        type: string
+    type: object
+  dto.RegisterRequest:
+    properties:
+      country:
+        maxLength: 50
+        minLength: 2
+        type: string
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      team_name:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - country
+    - email
+    - password
+    - team_name
+    type: object
+  dto.TeamWithPlayersResponse:
+    properties:
+      players:
+        items:
+          $ref: '#/definitions/entity.Player'
+        type: array
+      team:
+        $ref: '#/definitions/entity.Team'
+    type: object
+  dto.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  dto.TransferListItemResponse:
+    properties:
+      player:
+        $ref: '#/definitions/entity.Player'
+      seller_team:
+        $ref: '#/definitions/entity.Team'
+      transfer:
+        $ref: '#/definitions/entity.Transfer'
+    type: object
+  dto.TransfersResponse:
+    properties:
+      transfers:
+        items:
+          $ref: '#/definitions/dto.TransferListItemResponse'
+        type: array
+    type: object
+  dto.UpdatePlayerRequest:
+    properties:
+      country:
+        maxLength: 50
+        minLength: 2
+        type: string
+      first_name:
+        maxLength: 50
+        minLength: 2
+        type: string
+      last_name:
+        maxLength: 50
+        minLength: 2
+        type: string
+    type: object
+  dto.UpdateTeamRequest:
+    properties:
+      country:
+        maxLength: 50
+        minLength: 2
+        type: string
+      name:
+        maxLength: 50
+        minLength: 3
         type: string
     type: object
   entity.Player:
@@ -65,27 +144,6 @@ definitions:
     - PositionDefender
     - PositionMidfielder
     - PositionAttacker
-  entity.RegisterRequest:
-    properties:
-      country:
-        maxLength: 50
-        minLength: 2
-        type: string
-      email:
-        type: string
-      password:
-        minLength: 8
-        type: string
-      team_name:
-        maxLength: 50
-        minLength: 3
-        type: string
-    required:
-    - country
-    - email
-    - password
-    - team_name
-    type: object
   entity.Team:
     properties:
       budget:
@@ -103,22 +161,6 @@ definitions:
       updated_at:
         type: string
       user_id:
-        type: string
-    type: object
-  entity.TeamWithPlayers:
-    properties:
-      players:
-        items:
-          $ref: '#/definitions/entity.Player'
-        type: array
-      team:
-        $ref: '#/definitions/entity.Team'
-    type: object
-  entity.TokenResponse:
-    properties:
-      access_token:
-        type: string
-      refresh_token:
         type: string
     type: object
   entity.Transfer:
@@ -140,15 +182,6 @@ definitions:
       status:
         $ref: '#/definitions/entity.TransferStatus'
     type: object
-  entity.TransferListItem:
-    properties:
-      player:
-        $ref: '#/definitions/entity.Player'
-      seller_team:
-        $ref: '#/definitions/entity.Team'
-      transfer:
-        $ref: '#/definitions/entity.Transfer'
-    type: object
   entity.TransferStatus:
     enum:
     - active
@@ -159,39 +192,6 @@ definitions:
     - TransferStatusActive
     - TransferStatusCompleted
     - TransferStatusCancelled
-  entity.TransfersResponse:
-    properties:
-      transfers:
-        items:
-          $ref: '#/definitions/entity.TransferListItem'
-        type: array
-    type: object
-  entity.UpdatePlayerRequest:
-    properties:
-      country:
-        maxLength: 50
-        minLength: 2
-        type: string
-      first_name:
-        maxLength: 50
-        minLength: 2
-        type: string
-      last_name:
-        maxLength: 50
-        minLength: 2
-        type: string
-    type: object
-  entity.UpdateTeamRequest:
-    properties:
-      country:
-        maxLength: 50
-        minLength: 2
-        type: string
-      name:
-        maxLength: 50
-        minLength: 3
-        type: string
-    type: object
 host: localhost:8080
 info:
   contact:
@@ -216,30 +216,30 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.LoginRequest'
+          $ref: '#/definitions/dto.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.TokenResponse'
+            $ref: '#/definitions/dto.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "429":
           description: Too Many Requests
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Login user
       tags:
       - auth
@@ -255,26 +255,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.RegisterRequest'
+          $ref: '#/definitions/dto.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.TokenResponse'
+            $ref: '#/definitions/dto.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Register new user
       tags:
       - auth
@@ -295,7 +295,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.UpdatePlayerRequest'
+          $ref: '#/definitions/dto.UpdatePlayerRequest'
       produces:
       - application/json
       responses:
@@ -306,19 +306,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Update player
@@ -341,7 +341,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.ListPlayerRequest'
+          $ref: '#/definitions/dto.ListPlayerRequest'
       produces:
       - application/json
       responses:
@@ -352,27 +352,27 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List player for transfer
@@ -388,19 +388,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.TeamWithPlayers'
+            $ref: '#/definitions/dto.TeamWithPlayersResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get my team
@@ -417,7 +417,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.UpdateTeamRequest'
+          $ref: '#/definitions/dto.UpdateTeamRequest'
       produces:
       - application/json
       responses:
@@ -428,19 +428,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Update team
@@ -456,15 +456,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.TransfersResponse'
+            $ref: '#/definitions/dto.TransfersResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get transfer list
@@ -486,23 +486,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.MessageResponse'
+            $ref: '#/definitions/dto.MessageResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/entity.ErrorResponse'
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Buy player

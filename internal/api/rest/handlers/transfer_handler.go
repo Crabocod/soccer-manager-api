@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"soccer_manager_service/internal/api/rest/middleware"
-	"soccer_manager_service/internal/entity"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/usecase/adapters"
 	apperr "soccer_manager_service/pkg/errors"
 
@@ -26,6 +26,7 @@ func NewTransferHandler(transferService adapters.TransferService, logger *zap.Lo
 	}
 }
 
+// ListPlayer
 // @Summary List player for transfer
 // @Description Put player on transfer market
 // @ID list-player-transfer
@@ -34,14 +35,14 @@ func NewTransferHandler(transferService adapters.TransferService, logger *zap.Lo
 // @Accept json
 // @Produce json
 // @Param id path string true "Player ID"
-// @Param request body entity.ListPlayerRequest true "Transfer data"
+// @Param request body dto.ListPlayerRequest true "Transfer data"
 // @Success 201 {object} entity.Transfer
-// @Failure 400 {object} entity.ErrorResponse
-// @Failure 401 {object} entity.ErrorResponse
-// @Failure 403 {object} entity.ErrorResponse
-// @Failure 404 {object} entity.ErrorResponse
-// @Failure 409 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 403 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 409 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/players/{id}/transfer [post]
 func (h *TransferHandler) ListPlayer(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)
@@ -64,7 +65,7 @@ func (h *TransferHandler) ListPlayer(c *gin.Context) {
 		return
 	}
 
-	var req entity.ListPlayerRequest
+	var req dto.ListPlayerRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Warn("invalid list player request", zap.Error(err))
@@ -109,15 +110,16 @@ func (h *TransferHandler) ListPlayer(c *gin.Context) {
 	c.JSON(http.StatusCreated, transfer)
 }
 
+// GetTransferList
 // @Summary Get transfer list
 // @Description Get all available transfers
 // @ID get-transfer-list
 // @Tags transfers
 // @Security BearerAuth
 // @Produce json
-// @Success 200 {object} entity.TransfersResponse
-// @Failure 401 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Success 200 {object} dto.TransfersResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/transfers [get]
 func (h *TransferHandler) GetTransferList(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)
@@ -135,6 +137,7 @@ func (h *TransferHandler) GetTransferList(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"transfers": transfers})
 }
 
+// BuyPlayer
 // @Summary Buy player
 // @Description Purchase player from transfer market
 // @ID buy-player
@@ -142,11 +145,11 @@ func (h *TransferHandler) GetTransferList(c *gin.Context) {
 // @Security BearerAuth
 // @Produce json
 // @Param id path string true "Transfer ID"
-// @Success 200 {object} entity.MessageResponse
-// @Failure 400 {object} entity.ErrorResponse
-// @Failure 401 {object} entity.ErrorResponse
-// @Failure 404 {object} entity.ErrorResponse
-// @Failure 500 {object} entity.ErrorResponse
+// @Success 200 {object} dto.MessageResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /api/v1/transfers/{id}/buy [post]
 func (h *TransferHandler) BuyPlayer(c *gin.Context) {
 	localizer := c.MustGet(middleware.LocalizerKey).(*i18n.Localizer)

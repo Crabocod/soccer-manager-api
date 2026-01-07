@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"soccer_manager_service/internal/config"
+	"soccer_manager_service/internal/dto"
 	"soccer_manager_service/internal/entity"
 	"soccer_manager_service/internal/ports"
 	apperr "soccer_manager_service/pkg/errors"
@@ -59,7 +60,7 @@ func (s *AuthService) incrementLoginAttemptsOnError(ctx context.Context, email s
 	}
 }
 
-func (s *AuthService) Register(ctx context.Context, req *entity.RegisterRequest) (accessToken, refreshToken string, err error) {
+func (s *AuthService) Register(ctx context.Context, req *dto.RegisterRequest) (accessToken, refreshToken string, err error) {
 	s.logger.Info("registering new user", zap.String("email", req.Email))
 
 	existing, err := s.userRepository.GetByEmail(ctx, req.Email)
@@ -121,7 +122,7 @@ func (s *AuthService) Register(ctx context.Context, req *entity.RegisterRequest)
 	return accessToken, refreshToken, nil
 }
 
-func (s *AuthService) Login(ctx context.Context, req *entity.LoginRequest) (accessToken, refreshToken string, err error) {
+func (s *AuthService) Login(ctx context.Context, req *dto.LoginRequest) (accessToken, refreshToken string, err error) {
 	s.logger.Info("user login attempt", zap.String("email", req.Email))
 
 	attempts, err := s.loginAttemptRepository.Get(ctx, req.Email)
